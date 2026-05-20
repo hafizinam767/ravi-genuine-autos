@@ -6,25 +6,38 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-function createPrismaClient() {
-  // Check if using Turso (cloud) or local SQLite
-  const useTurso = process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN
+function createPrismaClient(): PrismaClient {
+  const tursoUrl = process.env.TURSO_DATABASE_URL
+  const tursoToken = process.env.TURSO_AUTH_TOKEN
+  const localUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db'
 
-  if (useTurso) {
-    // Cloud database via Turso — required for Vercel/serverless
-    const libsql = createClient({
-      url: process.env.TURSO_DATABASE_URL!,
-      authToken: process.env.TURSO_AUTH_TOKEN!,
-    })
-    const adapter = new PrismaLibSQL(libsql)
-    return new PrismaClient({ adapter })
+  // Use Turso cloud database if BOTH URL and Token are properly set and valid
+  if (
+    tursoUrl &&
+    tursoToken &&
+    tursoUrl !== 'undefined' &&
+    tursoToken !== 'undefined' &&
+    tursoUrl.startsWith('libsql://')
+  ) {
+    try {
+      const libsql = createClient({
+        url: tursoUrl,
+        authToken: tursoToken,
+      })
+      const adapter = new PrismaLibSQL(libsql)
+      console.log('🗄️ Using Turso cloud database')
+      return new PrismaClient({ adapter })
+    } catch (error) {
+      console.warn('⚠️ Failed to connect to Turso, falling back to local database:', error)
+    }
   }
 
-  // Local SQLite database (for development)
+  // Fallback: Local SQLite database (for development or build time)
+  console.log('🗄️ Using local SQLite database')
   return new PrismaClient({
     datasources: {
       db: {
-        url: process.env.DATABASE_URL,
+        url: localUrl,
       },
     },
   })
@@ -35,7 +48,8 @@ export const db = globalForPrisma.prisma ?? createPrismaClient()
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
 
 // Enable WAL mode and set busy timeout for better SQLite concurrency (local only)
-if (!process.env.TURSO_DATABASE_URL) {
+const tursoUrl = process.env.TURSO_DATABASE_URL
+if (!tursoUrl || tursoUrl === 'undefined') {
   db.$executeRawUnsafe(`PRAGMA journal_mode=WAL;`).catch(() => {})
   db.$executeRawUnsafe(`PRAGMA busy_timeout=5000;`).catch(() => {})
   db.$executeRawUnsafe(`PRAGMA synchronous=NORMAL;`).catch(() => {})
