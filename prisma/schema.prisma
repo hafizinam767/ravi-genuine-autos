@@ -1,0 +1,101 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  icon        String?
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+}
+
+model CarModel {
+  id       String    @id @default(cuid())
+  name     String
+  make     String
+  slug     String    @unique
+  image    String?
+  products Product[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  price       Float
+  condition   String   // "new" or "used"
+  stock       Int      @default(0)
+  images      String   // comma-separated image paths
+  sku         String?
+  partNumber  String?
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+  carModelId  String
+  carModel    CarModel  @relation(fields: [carModelId], references: [id])
+  featured    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  orderItems  OrderItem[]
+  wishlists   Wishlist[]
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  phone     String?
+  password  String
+  address   String?
+  city      String?
+  orders    Order[]
+  wishlists Wishlist[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Order {
+  id          String     @id @default(cuid())
+  userId      String?
+  user        User?      @relation(fields: [userId], references: [id])
+  userName    String
+  userPhone   String
+  userAddress String?
+  userCity    String?
+  items       OrderItem[]
+  total       Float
+  status      String     @default("pending") // pending, confirmed, shipped, delivered, cancelled
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+model Wishlist {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
