@@ -78,6 +78,7 @@ export default function ProductForm({
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [carModels, setCarModels] = useState<CarModel[]>([]);
@@ -91,9 +92,10 @@ export default function ProductForm({
     async function loadOptions() {
       try {
         const [catRes, cmRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/car-models'),
+          fetch('/api/categories', { cache: 'no-store' }),
+          fetch('/api/car-models', { cache: 'no-store' }),
         ]);
+        if (!catRes.ok || !cmRes.ok) throw new Error('Failed to load options');
         const catData = await catRes.json();
         const cmData = await cmRes.json();
         setCategories(catData.categories || []);
@@ -189,24 +191,21 @@ export default function ProductForm({
   };
 
   const handleSubmit = async () => {
-    if (!name.trim()) {
-      toast.error('Product name is required');
-      return;
-    }
-    if (!description.trim()) {
-      toast.error('Description is required');
-      return;
-    }
-    if (!price || parseFloat(price) < 0) {
-      toast.error('Valid price is required');
-      return;
-    }
-    if (!categoryId) {
-      toast.error('Category is required');
-      return;
-    }
-    if (!carModelId) {
-      toast.error('Car model is required');
+    // Client-side validation
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors['product-name'] = 'Product name is required';
+    if (!description.trim()) newErrors['product-desc'] = 'Description is required';
+    if (price === '' || Number.isNaN(parseFloat(price)) || parseFloat(price) < 0) newErrors['product-price'] = 'Valid price is required';
+    if (!categoryId) newErrors['product-category'] = 'Category is required';
+    if (!carModelId) newErrors['product-car-model'] = 'Car model is required';
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Please complete the required fields');
+      // focus first invalid field
+      const first = Object.keys(newErrors)[0];
+      const el = document.getElementById(first);
+      if (el) (el as HTMLElement).focus();
       return;
     }
 
@@ -280,7 +279,11 @@ export default function ProductForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Brake Pad Set Front"
+              aria-invalid={!!errors['product-name']}
             />
+            {errors['product-name'] && (
+              <p className="text-sm text-red-600" id="error-product-name">{errors['product-name']}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -292,7 +295,11 @@ export default function ProductForm({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Detailed product description..."
               rows={3}
+              aria-invalid={!!errors['product-desc']}
             />
+            {errors['product-desc'] && (
+              <p className="text-sm text-red-600" id="error-product-desc">{errors['product-desc']}</p>
+            )}
           </div>
 
           {/* Price & Stock */}
@@ -307,7 +314,11 @@ export default function ProductForm({
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00"
+                aria-invalid={!!errors['product-price']}
               />
+              {errors['product-price'] && (
+                <p className="text-sm text-red-600" id="error-product-price">{errors['product-price']}</p>
+              )}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="product-stock">Stock</Label>
@@ -339,7 +350,7 @@ export default function ProductForm({
             <div className="grid gap-2">
               <Label>Category *</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
-                <SelectTrigger>
+                <SelectTrigger id="product-category">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -350,6 +361,9 @@ export default function ProductForm({
                   ))}
                 </SelectContent>
               </Select>
+              {errors['product-category'] && (
+                <p className="text-sm text-red-600" id="error-product-category">{errors['product-category']}</p>
+              )}
             </div>
           </div>
 
@@ -357,7 +371,7 @@ export default function ProductForm({
           <div className="grid gap-2">
             <Label>Car Model *</Label>
             <Select value={carModelId} onValueChange={setCarModelId}>
-              <SelectTrigger>
+              <SelectTrigger id="product-car-model">
                 <SelectValue placeholder="Select car model" />
               </SelectTrigger>
               <SelectContent>
@@ -368,6 +382,9 @@ export default function ProductForm({
                 ))}
               </SelectContent>
             </Select>
+            {errors['product-car-model'] && (
+              <p className="text-sm text-red-600" id="error-product-car-model">{errors['product-car-model']}</p>
+            )}
           </div>
 
           {/* SKU & Part Number */}

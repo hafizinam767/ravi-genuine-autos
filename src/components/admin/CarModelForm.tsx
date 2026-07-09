@@ -44,6 +44,7 @@ export default function CarModelForm({
   const [imageUrl, setImageUrl] = useState('');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileInputKey, setFileInputKey] = useState(0);
@@ -117,13 +118,16 @@ export default function CarModelForm({
   };
 
   const handleSubmit = async () => {
-    if (!name.trim()) {
-      toast.error('Car model name is required');
-      return;
-    }
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors['cm-name'] = 'Car model name is required';
+    if (!make.trim()) newErrors['cm-make'] = 'Car make (brand) is required';
 
-    if (!make.trim()) {
-      toast.error('Car make (brand) is required');
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Please complete the required fields');
+      const first = Object.keys(newErrors)[0];
+      const el = document.getElementById(first);
+      if (el) (el as HTMLElement).focus();
       return;
     }
 
@@ -189,7 +193,11 @@ export default function CarModelForm({
               value={make}
               onChange={(e) => setMake(e.target.value)}
               placeholder="e.g., Toyota, Honda, Suzuki"
+              aria-invalid={!!errors['cm-make']}
             />
+            {errors['cm-make'] && (
+              <p className="text-sm text-red-600" id="error-cm-make">{errors['cm-make']}</p>
+            )}
             <p className="text-xs text-muted-foreground">The car manufacturer or brand</p>
           </div>
 
@@ -201,7 +209,11 @@ export default function CarModelForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Corolla, Civic, Alto"
+              aria-invalid={!!errors['cm-name']}
             />
+            {errors['cm-name'] && (
+              <p className="text-sm text-red-600" id="error-cm-name">{errors['cm-name']}</p>
+            )}
           </div>
 
           {/* Slug (auto-generated, read-only) */}
