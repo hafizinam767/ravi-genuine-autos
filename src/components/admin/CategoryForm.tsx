@@ -47,6 +47,7 @@ export default function CategoryForm({
   const [imageUrl, setImageUrl] = useState('');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileInputKey, setFileInputKey] = useState(0);
@@ -122,8 +123,15 @@ export default function CategoryForm({
   };
 
   const handleSubmit = async () => {
-    if (!name.trim()) {
-      toast.error('Category name is required');
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors['cat-name'] = 'Category name is required';
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      toast.error('Please complete the required fields');
+      const first = Object.keys(newErrors)[0];
+      const el = document.getElementById(first);
+      if (el) (el as HTMLElement).focus();
       return;
     }
 
@@ -190,7 +198,11 @@ export default function CategoryForm({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Engine Parts"
+              aria-invalid={!!errors['cat-name']}
             />
+            {errors['cat-name'] && (
+              <p className="text-sm text-red-600" id="error-cat-name">{errors['cat-name']}</p>
+            )}
           </div>
 
           {/* Slug (auto-generated, read-only) */}

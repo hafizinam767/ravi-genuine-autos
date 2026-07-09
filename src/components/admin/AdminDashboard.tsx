@@ -227,18 +227,22 @@ function AdminDashboardContent() {
   }, []);
 
   // ── Fetch products ─────────────────────────────────────────────────
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (page = productsPage) => {
     try {
       const params = new URLSearchParams({
-        page: String(productsPage),
+        page: String(page),
         limit: '10',
       });
       if (productSearch) params.set('search', productSearch);
-      const res = await fetch(`/api/products?${params}`);
+      const res = await fetch(`/api/products?${params}`, {
+        credentials: 'include',
+        cache: 'no-store',
+      });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setProducts(data.products || []);
       setProductsTotal(data.pagination?.total || 0);
+      setProductsPage(page);
     } catch {
       toast.error('Failed to load products');
     }
@@ -247,7 +251,7 @@ function AdminDashboardContent() {
   // ── Fetch categories ───────────────────────────────────────────────
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch('/api/categories');
+      const res = await fetch('/api/categories', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setCategories(data.categories || []);
@@ -259,7 +263,7 @@ function AdminDashboardContent() {
   // ── Fetch car models ───────────────────────────────────────────────
   const fetchCarModels = useCallback(async () => {
     try {
-      const res = await fetch('/api/car-models');
+      const res = await fetch('/api/car-models', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setCarModels(data.carModels || []);
@@ -271,7 +275,7 @@ function AdminDashboardContent() {
   // ── Fetch orders (admin) ───────────────────────────────────────────
   const fetchOrders = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/orders?page=${ordersPage}&limit=10`, { credentials: 'include' });
+      const res = await fetch(`/api/admin/orders?page=${ordersPage}&limit=10`, { credentials: 'include', cache: 'no-store' });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setOrders(data.orders || []);
@@ -285,7 +289,7 @@ function AdminDashboardContent() {
   // ── Fetch customers ────────────────────────────────────────────────
   const fetchCustomers = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/customers', { credentials: 'include' });
+      const res = await fetch('/api/admin/customers', { credentials: 'include', cache: 'no-store' });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       setCustomers(data.users || []);
@@ -318,14 +322,25 @@ function AdminDashboardContent() {
     if (!deleteTarget) return;
     try {
       if (deleteTarget.type === 'product') {
-        const res = await fetch(`/api/products/${deleteTarget.id}`, { method: 'DELETE', credentials: 'include' });
+        // Optimistically remove the product from UI for immediate feedback
+        setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+        const res = await fetch(`/api/products/${deleteTarget.id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
         const data = await res.json();
         if (!res.ok) {
           toast.error(data.error || 'Failed to delete product');
+          fetchProducts(productsPage);
           return;
         }
         toast.success('Product deleted');
-        fetchProducts();
+        fetchStats();
+        if (products.length === 1 && productsPage > 1) {
+          setProductsPage(productsPage - 1);
+        } else {
+          fetchProducts(productsPage);
+        }
       } else if (deleteTarget.type === 'category') {
         const res = await fetch(`/api/categories?id=${deleteTarget.id}`, { method: 'DELETE', credentials: 'include' });
         const data = await res.json();
@@ -669,9 +684,17 @@ function AdminDashboardContent() {
                             variant="ghost"
                             size="icon"
                             className="size-8"
-                            onClick={() => {
-                              setEditingProduct(p);
-                              setProductFormOpen(true);
+                            onClick={async () => {
+                              try {
+                                const res = await fetch(`/api/products/${p.id}`);
+                                if (!res.ok) throw new Error('Failed to fetch product');
+                                const data = await res.json();
+                                const prod = data.product;
+                                setEditingProduct(prod);
+                                setProductFormOpen(true);
+                              } catch (err) {
+                                toast.error('Failed to load product details');
+                              }
                             }}
                           >
                             <Pencil className="size-3.5" />
@@ -1226,9 +1249,27 @@ function AdminDashboardContent() {
       <ProductForm
         open={productFormOpen}
         onOpenChange={setProductFormOpen}
-        product={editingProduct}
-        onSuccess={() => {
-          fetchProducts();
+        product={
+          editingProduct
+            ? {
+                id: editingProduct.id,
+                name: editingProduct.name,
+                description: (editingProduct as any).description || '',
+                price: editingProduct.price,
+                condition: (editingProduct as any).condition || 'new',
+                stock: editingProduct.stock,
+                images: editingProduct.images || '',
+                sku: (editingProduct as any).sku || null,
+                partNumber: (editingProduct as any).partNumber || null,
+                categoryId: editingProduct.category?.id || '',
+                carModelId: editingProduct.carModel?.id || '',
+                featured: editingProduct.featured || false,
+              }
+            : null
+        }
+        onSuccess={async () => {
+          setProductsPage(1);
+          await fetchProducts(1);
           fetchStats();
         }}
       />

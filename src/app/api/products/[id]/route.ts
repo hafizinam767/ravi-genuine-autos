@@ -90,12 +90,15 @@ export async function PUT(
       let slug = baseSlug;
       let slugCounter = 1;
 
-      const existingWithSlug = await db.product.findUnique({
+      let existingWithSlug = await db.product.findUnique({
         where: { slug },
       });
       while (existingWithSlug && existingWithSlug.id !== id) {
         slug = `${baseSlug}-${slugCounter}`;
         slugCounter++;
+        existingWithSlug = await db.product.findUnique({
+          where: { slug },
+        });
       }
       updateData.slug = slug;
     }
