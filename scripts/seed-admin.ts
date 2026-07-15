@@ -1,10 +1,15 @@
-import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
-// We need to import db properly for a standalone script
-// Using dynamic import since this script runs with bun directly
+const SALT_LENGTH = 16;
+const KEY_LENGTH = 64;
+
+function hashPasswordSync(password: string): string {
+  const salt = crypto.randomBytes(SALT_LENGTH).toString('hex');
+  const key = crypto.scryptSync(password, salt, KEY_LENGTH);
+  return `${salt}:${key.toString('hex')}`;
+}
 
 async function main() {
-  // Dynamically import the db client
   const { db } = await import('../src/lib/db');
 
   const adminEmail = 'admin@ravigenuineautos.com';
@@ -23,24 +28,27 @@ async function main() {
     console.log(`   User ID: ${existing.id}`);
     console.log(`   Role: ${existing.role}`);
 
-    // Update role if not admin
-    if (existing.role !== adminRole) {
+    const hashedPassword = hashPasswordSync(adminPassword);
+
+    const updateData: { role?: string; password?: string; name?: string; email?: string } = {};
+
+    if (existing.role !== adminRole) updateData.role = adminRole;
+    if (existing.password !== hashedPassword) updateData.password = hashedPassword;
+
+    if (Object.keys(updateData).length > 0) {
       await db.user.update({
         where: { id: existing.id },
-        data: { role: adminRole },
+        data: updateData,
       });
-      console.log('   ✅ Updated role to admin');
+      console.log('   ✅ Updated admin credentials for the simplified deployment flow');
     }
 
     await db.$disconnect();
     return;
   }
 
-  // Hash the password
-  const salt = await bcrypt.genSalt(12);
-  const hashedPassword = await bcrypt.hash(adminPassword, salt);
+  const hashedPassword = hashPasswordSync(adminPassword);
 
-  // Create admin user
   const admin = await db.user.create({
     data: {
       name: 'Admin',

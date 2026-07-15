@@ -7,31 +7,26 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient(): PrismaClient {
-  const tursoUrl = process.env.TURSO_DATABASE_URL
-  const tursoToken = process.env.TURSO_AUTH_TOKEN
-  const localUrl = process.env.DATABASE_URL || 'file:./prisma/dev.db'
+  const localUrl = process.env.DATABASE_URL || 'file:./db/custom.db'
+  const remoteUrl = process.env.TURSO_DATABASE_URL
+  const isTurso = Boolean(remoteUrl && remoteUrl.startsWith('libsql://'))
 
-  // Use Turso cloud database if BOTH URL and Token are properly set and valid
-  if (
-    tursoUrl &&
-    tursoToken &&
-    tursoUrl !== 'undefined' &&
-    tursoToken !== 'undefined' &&
-    tursoUrl.startsWith('libsql://')
-  ) {
-    try {
-      const adapter = new PrismaLibSQL({
-        url: tursoUrl,
-        authToken: tursoToken,
-      })
-      console.log('🗄️ Using Turso cloud database')
-      return new PrismaClient({ adapter })
-    } catch (error) {
-      console.warn('⚠️ Failed to connect to Turso, falling back to local database:', error)
+  if (isTurso) {
+    const authToken = process.env.TURSO_AUTH_TOKEN
+    if (!authToken) {
+      throw new Error('TURSO_AUTH_TOKEN is required when using a libsql database URL')
     }
+
+    console.log('🗄️ Using Turso cloud database')
+
+    return new PrismaClient({
+      adapter: new PrismaLibSQL({
+        url: remoteUrl!,
+        authToken,
+      }),
+    })
   }
 
-  // Fallback: Local SQLite database (for development or build time)
   console.log('🗄️ Using local SQLite database')
   return new PrismaClient({
     datasources: {
@@ -46,10 +41,8 @@ export const db = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
 
-// Enable WAL mode and set busy timeout for better SQLite concurrency (local only)
-const tursoUrl = process.env.TURSO_DATABASE_URL
-if (!tursoUrl || tursoUrl === 'undefined') {
-  db.$executeRawUnsafe(`PRAGMA journal_mode=WAL;`).catch(() => {})
-  db.$executeRawUnsafe(`PRAGMA busy_timeout=5000;`).catch(() => {})
-  db.$executeRawUnsafe(`PRAGMA synchronous=NORMAL;`).catch(() => {})
-}
+// Enable WAL mode and set busy timeout for better SQLite concurrency
+// This keeps the local SQLite deployment simple and portable.
+db.$executeRawUnsafe(`PRAGMA journal_mode=WAL;`).catch(() => {})
+db.$executeRawUnsafe(`PRAGMA busy_timeout=5000;`).catch(() => {})
+db.$executeRawUnsafe(`PRAGMA synchronous=NORMAL;`).catch(() => {})
