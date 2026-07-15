@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { uploadImageToCloudinary } from '@/lib/cloudinary-upload';
 import { Upload, X, Loader2, ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -86,36 +87,12 @@ export default function CategoryForm({
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('files', files[0]);
-
-      const res = await fetch('/api/upload', { method: 'POST', body: formData, credentials: 'include' });
-
-      if (!res.ok) {
-        let errorMsg = 'Upload failed';
-        try {
-          const data = await res.json();
-          errorMsg = data.error || errorMsg;
-        } catch {
-          if (res.status === 404) {
-            errorMsg = 'Upload service not available. Please contact support.';
-          } else if (res.status === 401) {
-            errorMsg = 'Please log in again to upload images.';
-          }
-        }
-        toast.error(errorMsg);
-        return;
-      }
-
-      const data = await res.json();
-      const paths: string[] = data.paths || [];
-      if (paths.length > 0) {
-        setImageUrl(paths[0]);
-        toast.success('Image uploaded successfully');
-      }
+      const path = await uploadImageToCloudinary(files[0]);
+      setImageUrl(path);
+      toast.success('Image uploaded successfully');
     } catch (err) {
       console.error('Image upload error:', err);
-      toast.error('Image upload failed. Please try again.');
+      toast.error(err instanceof Error ? err.message : 'Image upload failed. Please try again.');
     } finally {
       setUploading(false);
       setFileInputKey((prev) => prev + 1);

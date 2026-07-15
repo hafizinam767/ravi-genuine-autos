@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import { writeFile, unlink, stat } from 'fs/promises';
-import { join } from 'path';
-import { tmpdir } from 'os';
 import { v2 as cloudinary } from 'cloudinary';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,36 +9,64 @@ cloudinary.config({
   secure: true,
 });
 
-async function uploadBufferToCloudinary(buffer: Buffer, publicId: string, extension: string) {
-  const tempFileName = `${publicId}.${extension}`;
-  const tempFilePath = join(tmpdir(), tempFileName);
-  await writeFile(tempFilePath, buffer);
-
-  try {
-    const result = await cloudinary.uploader.upload(tempFilePath, {
-      folder: process.env.CLOUDINARY_FOLDER || 'ravi_genuine_autos',
-      public_id: publicId,
-      resource_type: 'image',
-      overwrite: false,
-    });
-    return result;
-  } finally {
-    await unlink(tempFilePath).catch(() => {});
-  }
-}
-
-function extractExtension(fileName: string, mimeType: string) {
-  const match = fileName.match(/\.([^.]+)$/);
-  if (match?.[1]) return match[1].toLowerCase();
-  const parts = mimeType.split('/');
-  return parts[1] || 'jpg';
+async function uploadBufferToCloudinary(buffer: Buffer, publicId: string): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: process.env.CLOUDINARY_FOLDER || 'ravi_genuine_autos',
+        public_id: publicId,
+        resource_type: 'image',
+        overwrite: false,
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+    uploadStream.end(buffer);
+  });
 }
 
 export async function POST(request: Request) {
   try {
     console.log('Upload endpoint hit');
-    console.log('Content-Type:', request.headers.get('content-type'));
+    const { searchParams } = new URL(request.url);
+    const mode = searchParams.get('mode');
 
+    // 1. Signature Preparation Mode for Client-Side direct uploads
+    if (mode === 'prepare') {
+      const body = await request.json().catch(() => ({}));
+      const folder = body.folder || process.env.CLOUDINARY_FOLDER || 'ravi_genuine_autos';
+      const timestamp = Math.round(new Date().getTime() / 1000);
+
+      const paramsToSign = {
+        timestamp,
+        folder,
+      };
+
+      const signature = cloudinary.utils.api_sign_request(
+        paramsToSign,
+        process.env.CLOUDINARY_API_SECRET!
+      );
+
+      const params = {
+        ...paramsToSign,
+        signature,
+        api_key: process.env.CLOUDINARY_API_KEY!,
+      };
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+      return NextResponse.json({
+        uploadUrl,
+        params,
+      });
+    }
+
+    // 2. Fallback backend file upload (Memory Buffer upload stream)
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
 
@@ -62,13 +87,9 @@ export async function POST(request: Request) {
 
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
-      console.log('Buffer first bytes:', buffer.slice(0, 16).toString('hex'));
 
       const publicId = uuidv4();
-      const extension = extractExtension(file.name, file.type);
-      console.log('Derived extension:', extension);
-
-      const uploadResult = await uploadBufferToCloudinary(buffer, publicId, extension);
+      const uploadResult = await uploadBufferToCloudinary(buffer, publicId);
       paths.push(uploadResult.secure_url);
     }
 
@@ -81,3 +102,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to upload files' }, { status: 500 });
   }
 }
+
