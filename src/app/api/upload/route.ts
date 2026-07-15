@@ -33,6 +33,19 @@ async function uploadBufferToCloudinary(buffer: Buffer, publicId: string): Promi
 export async function POST(request: Request) {
   try {
     console.log('Upload endpoint hit');
+    
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.error('Cloudinary configuration is missing on the server.');
+      return NextResponse.json(
+        { error: 'Cloudinary is not configured on the Vercel deployment. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables in your Vercel Dashboard.' },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const mode = searchParams.get('mode');
 
