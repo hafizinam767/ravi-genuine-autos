@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { uploadImagesToCloudinary } from '@/lib/cloudinary-upload';
 import { Upload, X, Loader2, ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import CarModelSelect from './CarModelSelect';
@@ -143,32 +144,8 @@ export default function ProductForm({
 
     setUploading(true);
     try {
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
-      }
-
-      const res = await fetch('/api/upload', { method: 'POST', body: formData, credentials: 'include' });
-
-      if (!res.ok) {
-        let errorMsg = 'Upload failed';
-        try {
-          const data = await res.json();
-          errorMsg = data.error || errorMsg;
-        } catch {
-          // If we can't parse JSON, check status
-          if (res.status === 404) {
-            errorMsg = 'Upload service not available. Please contact support.';
-          } else if (res.status === 401) {
-            errorMsg = 'Please log in again to upload images.';
-          }
-        }
-        toast.error(errorMsg);
-        return;
-      }
-
-      const data = await res.json();
-      const paths: string[] = data.paths || [];
+      const fileList = Array.from(files);
+      const paths = await uploadImagesToCloudinary(fileList);
 
       if (paths.length === 0) {
         toast.error('No images were uploaded');
@@ -179,7 +156,7 @@ export default function ProductForm({
       toast.success(`${paths.length} image(s) uploaded successfully`);
     } catch (err) {
       console.error('Image upload error:', err);
-      toast.error('Image upload failed. Please try again.');
+      toast.error(err instanceof Error ? err.message : 'Image upload failed. Please try again.');
     } finally {
       setUploading(false);
       // Reset the file input so the same file can be re-selected
