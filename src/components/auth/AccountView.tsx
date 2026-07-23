@@ -30,7 +30,7 @@ import {
 import { useAppStore } from '@/lib/store';
 import type { User } from '@/lib/store';
 import {
-  User,
+  User as UserIcon,
   Mail,
   Phone,
   MapPin,
@@ -536,7 +536,7 @@ export default function AccountView() {
       <div className="mx-auto max-w-2xl py-8 sm:py-12">
         <div className="flex flex-col items-center gap-6 text-center">
           <div className="flex size-24 items-center justify-center rounded-full bg-red-50">
-            <User className="size-10 text-[#B91C1C]" />
+            <UserIcon className="size-10 text-[#B91C1C]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground">
@@ -566,7 +566,7 @@ export default function AccountView() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="flex size-14 items-center justify-center rounded-full bg-[#B91C1C]/10 text-[#B91C1C]">
-            <User className="size-6" />
+            <UserIcon className="size-6" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
@@ -901,7 +901,7 @@ export default function AccountView() {
                     <div className="space-y-2">
                       <Label htmlFor="profile-name">Full Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <UserIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                           id="profile-name"
                           className="pl-10"
@@ -978,7 +978,7 @@ export default function AccountView() {
                   <>
                     <div className="flex items-center gap-3 py-1">
                       <div className="flex size-9 items-center justify-center rounded-lg bg-muted">
-                        <User className="size-4 text-muted-foreground" />
+                        <UserIcon className="size-4 text-muted-foreground" />
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Full Name</p>

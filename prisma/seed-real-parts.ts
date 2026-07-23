@@ -124,7 +124,6 @@ async function main() {
         images: part.images,
         sku: part.sku,
         partNumber: part.partNumber,
-        brochure: part.brochure || null,
         categoryId: category.id,
         carModelId: carModel.id,
         featured: part.featured,

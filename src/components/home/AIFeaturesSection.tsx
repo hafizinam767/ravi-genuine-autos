@@ -74,19 +74,20 @@ export default function AIFeaturesSection() {
         </div>
       </motion.div>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
         {features.map((feature, index) => {
           const Icon = feature.icon;
           return (
             <motion.div
               key={feature.id}
+              className="h-full"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
               transition={{ duration: 0.5, delay: index * 0.15 }}
             >
               <Card
-                className="group relative cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+                className="group relative h-full cursor-pointer overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
                 onClick={() => handleAction(feature.action)}
               >
                 {/* Gradient border effect */}
@@ -97,7 +98,7 @@ export default function AIFeaturesSection() {
                   <div className="h-full w-full rounded-[10px] bg-white" />
                 </div>
 
-                <CardContent className="relative p-6">
+                <CardContent className="relative flex min-h-[200px] flex-col items-center justify-between p-6 text-center">
                   {/* Gradient accent line at top */}
                   <div
                     className={`absolute left-0 right-0 top-0 h-1 rounded-t-xl bg-gradient-to-r ${feature.gradient}`}

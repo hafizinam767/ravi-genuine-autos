@@ -60,7 +60,7 @@ interface AppStore {
   cart: CartItem[];
   user: User | null;
   showAuth: boolean;
-  authMode: 'login' | 'register';
+  authMode: 'login' | 'register' | 'forgot-password';
   showChat: boolean;
   cartOpen: boolean;
   wishlist: string[];
@@ -91,7 +91,7 @@ interface AppStore {
   setWishlist: (productIds: string[]) => void;
 
   // UI State Actions
-  setShowAuth: (show: boolean, mode?: 'login' | 'register') => void;
+  setShowAuth: (show: boolean, mode?: 'login' | 'register' | 'forgot-password') => void;
   setShowChat: (show: boolean) => void;
   setCartOpen: (open: boolean) => void;
 }

@@ -252,6 +252,5 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// ─── Exported utilities for other routes ─────────────────────────────────────
+// ─── End of Handlers ─────────────────────────────────────────────────────────
 
-export { verifyToken, generateToken, createSessionCookie, clearSessionCookie, COOKIE_NAME };

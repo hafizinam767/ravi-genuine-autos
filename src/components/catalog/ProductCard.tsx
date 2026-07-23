@@ -27,7 +27,7 @@ interface ProductCardProps {
     condition: string;
     images: string;
     carModel: { name: string; make: string };
-    category: { name: string };
+    category: { name: string; image?: string | null };
   };
 }
 
@@ -71,6 +71,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
 
   const getCategoryImage = (categoryName: string): string | null => {
+    if (product.category.image) return product.category.image;
     const lower = categoryName.toLowerCase();
     for (const [key, img] of Object.entries(categoryImageMap)) {
       if (lower.includes(key)) return img;

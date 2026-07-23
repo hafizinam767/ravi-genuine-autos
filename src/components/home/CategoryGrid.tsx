@@ -23,6 +23,7 @@ interface Category {
   slug: string;
   icon: string | null;
   description: string | null;
+  image: string | null;
   productCount: number;
 }
 
@@ -58,6 +59,7 @@ const categoryImageMap: Record<string, string> = {
   'body-parts': '/categories/body-parts.jpg',
   'engine-parts': '/categories/engine-parts.png',
   'suspension-parts': '/categories/suspension.jpg',
+  'chassis-suspension-parts': '/categories/suspension.jpg',
   'brake-parts': '/categories/brake-service.png',
   'interior-parts': '/products/interior-parts.png',
   'electrical-parts': '/products/electrical-parts.png',
@@ -67,7 +69,7 @@ const categoryImageMap: Record<string, string> = {
 
 // ─── Featured category slugs ──────────────────────────────────────────────
 
-const FEATURED_SLUGS = ['body-parts', 'engine-parts', 'suspension-parts', 'brake-parts'];
+const FEATURED_SLUGS = ['body-parts', 'engine-parts', 'chassis-suspension-parts', 'brake-parts'];
 
 // ─── Component ──────────────────────────────────────────────────────────
 
@@ -143,7 +145,7 @@ export default function CategoryGrid() {
             {/* ── Featured 4-Category Grid ────────────────────────────── */}
             <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
               {featuredCategories.map((category, index) => {
-                const imageSrc = categoryImageMap[category.slug];
+                const imageSrc = category.image || categoryImageMap[category.slug];
                 const Icon = getCategoryIcon(category.slug, index);
 
                 return (
@@ -205,7 +207,7 @@ export default function CategoryGrid() {
                 </h3>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                   {otherCategories.map((category, index) => {
-                    const imageSrc = categoryImageMap[category.slug];
+                    const imageSrc = category.image || categoryImageMap[category.slug];
                     const Icon = getCategoryIcon(category.slug, index + FEATURED_SLUGS.length);
 
                     return (

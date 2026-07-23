@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Upload, X, Loader2, ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import CarModelSelect from './CarModelSelect';
 
 interface Category {
   id: string;
@@ -370,18 +371,13 @@ export default function ProductForm({
           {/* Car Model */}
           <div className="grid gap-2">
             <Label>Car Model *</Label>
-            <Select value={carModelId} onValueChange={setCarModelId}>
-              <SelectTrigger id="product-car-model">
-                <SelectValue placeholder="Select car model" />
-              </SelectTrigger>
-              <SelectContent>
-                {carModels.map((cm) => (
-                  <SelectItem key={cm.id} value={cm.id}>
-                    {cm.make} {cm.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CarModelSelect
+              id="product-car-model"
+              carModels={carModels}
+              value={carModelId}
+              onChange={setCarModelId}
+              error={errors['product-car-model']}
+            />
             {errors['product-car-model'] && (
               <p className="text-sm text-red-600" id="error-product-car-model">{errors['product-car-model']}</p>
             )}

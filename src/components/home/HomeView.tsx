@@ -1,17 +1,25 @@
 'use client';
 
 import HeroSection from './HeroSection';
+import AIFeaturesSection from './AIFeaturesSection';
 import CategoryGrid from './CategoryGrid';
+import CarModelSlider from './CarModelSlider';
 import FeaturedProducts from './FeaturedProducts';
 
 export default function HomeView() {
   return (
-    <main className="min-h-screen scroll-smooth">
-      {/* Vehicle Selector + Part Number Search (like hyaparts.com top sections) */}
+    <main className="min-h-screen scroll-smooth space-y-12 pb-12">
+      {/* Vehicle Selector + Part Number Search */}
       <HeroSection />
 
-      {/* Category Images Grid (like hyaparts.com features section) */}
+      {/* AI Features Section */}
+      <AIFeaturesSection />
+
+      {/* Category Images Grid */}
       <CategoryGrid />
+
+      {/* Popular Car Models Slider */}
+      <CarModelSlider />
 
       {/* Featured Products */}
       <FeaturedProducts />

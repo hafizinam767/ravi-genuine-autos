@@ -15,6 +15,8 @@ import {
   Wrench,
   ShieldCheck,
   RotateCcw,
+  CheckCircle2,
+  Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,25 +32,45 @@ interface IdentificationResult {
   condition: string | null;
   estimatedCategory: string | null;
   tips: string;
-  confidence: string;
+  confidence: 'high' | 'medium' | 'low';
+  matchedProduct?: {
+    id: string;
+    name: string;
+    price: number;
+    slug: string;
+    partNumber: string | null;
+    condition: string;
+  } | null;
 }
 
 const EXAMPLE_PARTS = [
-  { label: 'Brake Pad', emoji: '🔧' },
-  { label: 'Headlight Assembly', emoji: '💡' },
-  { label: 'Engine Belt', emoji: '⚙️' },
-  { label: 'Air Filter', emoji: '🌀' },
+  { label: 'Brake Pad', emoji: '🔧', sampleKeyword: 'brake' },
+  { label: 'Headlight Assembly', emoji: '💡', sampleKeyword: 'headlight' },
+  { label: 'Engine Belt', emoji: '⚙️', sampleKeyword: 'belt' },
+  { label: 'Air Filter', emoji: '🌀', sampleKeyword: 'filter' },
 ];
 
 const CONFIDENCE_COLORS: Record<string, string> = {
   high: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  medium:
-    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  medium: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   low: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 };
 
+// Create SVG data URL for sample images safely handling Unicode/emojis
+function createSampleSvgDataUrl(title: string, emoji: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+    <rect width="400" height="300" fill="#1e293b"/>
+    <circle cx="200" cy="130" r="60" fill="#b91c1c" opacity="0.2"/>
+    <text x="200" y="145" font-size="54" text-anchor="middle">${emoji}</text>
+    <text x="200" y="220" font-size="20" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">${title}</text>
+    <text x="200" y="250" font-size="13" font-family="sans-serif" fill="#94a3b8" text-anchor="middle">Ravi Genuine Autos • AI Part Scan</text>
+  </svg>`;
+  const base64 = btoa(unescape(encodeURIComponent(svg)));
+  return `data:image/svg+xml;base64,${base64}`;
+}
+
 export default function IdentifyView() {
-  const { setView, setFilters } = useAppStore();
+  const { setView, setFilters, selectProduct } = useAppStore();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [isIdentifying, setIsIdentifying] = useState(false);
@@ -57,36 +79,31 @@ export default function IdentifyView() {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = useCallback(
-    (file: File) => {
-      setError(null);
-      setResult(null);
+  const handleFileSelect = useCallback((file: File) => {
+    setError(null);
+    setResult(null);
 
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select an image file (JPG, PNG, or WebP).');
-        return;
-      }
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file (JPG, PNG, or WebP).');
+      return;
+    }
 
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        setError('Image size must be less than 10MB.');
-        return;
-      }
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image size must be less than 10MB.');
+      return;
+    }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string;
-        setImagePreview(dataUrl);
-        setImageBase64(dataUrl);
-      };
-      reader.onerror = () => {
-        setError('Failed to read the image file. Please try again.');
-      };
-      reader.readAsDataURL(file);
-    },
-    []
-  );
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result as string;
+      setImagePreview(dataUrl);
+      setImageBase64(dataUrl);
+    };
+    reader.onerror = () => {
+      setError('Failed to read the image file. Please try again.');
+    };
+    reader.readAsDataURL(file);
+  }, []);
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -121,9 +138,7 @@ export default function IdentifyView() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const identifyPart = async () => {
-    if (!imageBase64) return;
-
+  const identifyPartWithData = async (base64Data: string, hint?: string) => {
     setIsIdentifying(true);
     setError(null);
     setResult(null);
@@ -132,7 +147,7 @@ export default function IdentifyView() {
       const res = await fetch('/api/identify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageBase64 }),
+        body: JSON.stringify({ image: base64Data, hint }),
       });
 
       const data = await res.json();
@@ -155,6 +170,18 @@ export default function IdentifyView() {
     }
   };
 
+  const identifyPart = async () => {
+    if (!imageBase64) return;
+    await identifyPartWithData(imageBase64);
+  };
+
+  const selectExample = async (ex: (typeof EXAMPLE_PARTS)[0]) => {
+    const sampleUrl = createSampleSvgDataUrl(ex.label, ex.emoji);
+    setImagePreview(sampleUrl);
+    setImageBase64(sampleUrl);
+    await identifyPartWithData(sampleUrl, ex.sampleKeyword);
+  };
+
   const searchForPart = () => {
     if (!result) return;
     const searchTerm =
@@ -166,6 +193,10 @@ export default function IdentifyView() {
       setFilters({ condition: result.condition });
     }
     setView('catalog');
+  };
+
+  const openMatchedProduct = (productId: string) => {
+    selectProduct(productId);
   };
 
   const resetAll = () => {
@@ -253,13 +284,14 @@ export default function IdentifyView() {
             {/* Example Parts */}
             <div className="mt-6">
               <p className="mb-3 text-center text-sm font-medium text-muted-foreground">
-                Try these examples
+                Try these instant example scans
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {EXAMPLE_PARTS.map((ex) => (
                   <button
                     key={ex.label}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground transition-colors hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-950/20"
+                    onClick={() => selectExample(ex)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm text-foreground transition-colors hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 active:scale-95"
                   >
                     <span>{ex.emoji}</span>
                     {ex.label}
@@ -298,7 +330,10 @@ export default function IdentifyView() {
             <Button
               onClick={identifyPart}
               disabled={isIdentifying}
-              className="w-full gap-2 py-6 text-base font-semibold text-white disabled:opacity-60" style={{ backgroundColor: '#B91C1C' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#991B1B')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#B91C1C')}
+              className="w-full gap-2 py-6 text-base font-semibold text-white disabled:opacity-60"
+              style={{ backgroundColor: '#B91C1C' }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#991B1B')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#B91C1C')}
               size="lg"
             >
               {isIdentifying ? (
@@ -332,9 +367,7 @@ export default function IdentifyView() {
                 <p className="text-sm font-medium text-red-800 dark:text-red-300">
                   Identification Failed
                 </p>
-                <p className="mt-1 text-sm text-red-700 dark:text-red-400">
-                  {error}
-                </p>
+                <p className="mt-1 text-sm text-red-700 dark:text-red-400">{error}</p>
               </div>
             </div>
           </motion.div>
@@ -355,7 +388,7 @@ export default function IdentifyView() {
               <Sparkles className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 text-red-700" />
             </div>
             <p className="text-sm text-muted-foreground">
-              Analyzing your image with AI...
+              Analyzing your image with AI &amp; searching store catalog...
             </p>
           </motion.div>
         )}
@@ -371,8 +404,8 @@ export default function IdentifyView() {
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="mt-6"
           >
-            <Card className="border-red-200 dark:border-red-900 overflow-hidden">
-              <CardHeader className="bg-red-50 dark:bg-red-950/30 pb-4">
+            <Card className="overflow-hidden border-red-200 dark:border-red-900">
+              <CardHeader className="bg-red-50 pb-4 dark:bg-red-950/30">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-red-700" />
@@ -381,8 +414,7 @@ export default function IdentifyView() {
                   {result.confidence && (
                     <Badge
                       className={
-                        CONFIDENCE_COLORS[result.confidence] ||
-                        CONFIDENCE_COLORS.medium
+                        CONFIDENCE_COLORS[result.confidence] || CONFIDENCE_COLORS.medium
                       }
                     >
                       <ShieldCheck className="mr-1 h-3 w-3" />
@@ -392,6 +424,39 @@ export default function IdentifyView() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
+                {/* Matched Product Card if found in inventory */}
+                {result.matchedProduct && (
+                  <div className="rounded-xl border border-green-300 bg-green-50/50 p-4 dark:border-green-800 dark:bg-green-950/20">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-green-800 dark:text-green-300">
+                        <CheckCircle2 className="h-5 w-5" />
+                        <span className="font-semibold text-sm">In Store Inventory Match!</span>
+                      </div>
+                      <Badge className="bg-green-700 text-white">Verified Genuine</Badge>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <div>
+                        <p className="font-bold text-foreground text-base">{result.matchedProduct.name}</p>
+                        {result.matchedProduct.partNumber && (
+                          <p className="text-xs text-muted-foreground">P/N: {result.matchedProduct.partNumber}</p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-red-700 text-lg">
+                          {new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 }).format(result.matchedProduct.price)}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => openMatchedProduct(result.matchedProduct!.id)}
+                      className="mt-3 w-full gap-2 bg-green-700 hover:bg-green-800 text-white"
+                      size="sm"
+                    >
+                      <Package className="h-4 w-4" /> View Item Details &amp; Buy
+                    </Button>
+                  </div>
+                )}
+
                 {/* Part Name */}
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/30">
@@ -475,7 +540,7 @@ export default function IdentifyView() {
                 {result.tips && (
                   <div className="rounded-xl bg-muted/50 p-3">
                     <p className="text-xs font-medium text-muted-foreground">
-                      Tips
+                      Maintenance &amp; Fitment Tips
                     </p>
                     <p className="mt-1 text-sm text-foreground">
                       {result.tips}
@@ -489,7 +554,10 @@ export default function IdentifyView() {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Button
                     onClick={searchForPart}
-                    className="flex-1 gap-2 text-white" style={{ backgroundColor: '#B91C1C' }} onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#991B1B')} onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#B91C1C')}
+                    className="flex-1 gap-2 text-white"
+                    style={{ backgroundColor: '#B91C1C' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#991B1B')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#B91C1C')}
                     size="lg"
                   >
                     <Search className="h-4 w-4" />
@@ -507,8 +575,7 @@ export default function IdentifyView() {
                 </div>
 
                 <p className="text-center text-xs text-muted-foreground">
-                  Not what you&apos;re looking for? Try another angle or a clearer
-                  photo.
+                  For immediate order assistance, contact Mehar Zulfeqar Ali at 0320-0408917 / 0332-4131636.
                 </p>
               </CardContent>
             </Card>

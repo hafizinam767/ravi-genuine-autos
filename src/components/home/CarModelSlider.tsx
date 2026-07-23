@@ -105,7 +105,7 @@ export default function CarModelSlider() {
   useEffect(() => {
     async function fetchCarModels() {
       try {
-        const res = await fetch('/api/car-models');
+        const res = await fetch('/api/car-models', { cache: 'no-store' });
         if (!res.ok) throw new Error('Failed to fetch car models');
         const data = await res.json();
         setCarModels(data.carModels ?? []);
@@ -213,9 +213,9 @@ export default function CarModelSlider() {
                   <CardContent className="p-0">
                     {/* Car Image */}
                     <div className="relative h-32 w-full bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                      {carImageMap[model.slug] ? (
+                      {model.image || carImageMap[model.slug] ? (
                         <img
-                          src={carImageMap[model.slug]}
+                          src={model.image || carImageMap[model.slug]}
                           alt={model.name}
                           className="h-full w-full object-cover"
                           loading="lazy"

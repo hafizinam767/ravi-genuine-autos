@@ -16,9 +16,15 @@ import ChatWidget from '@/components/ai/ChatWidget';
 
 export default function Home() {
   const currentView = useAppStore((s) => s.currentView);
+  const selectedProductId = useAppStore((s) => s.selectedProductId);
   const user = useAppStore((s) => s.user);
   const setUser = useAppStore((s) => s.setUser);
   const setView = useAppStore((s) => s.setView);
+
+  // Automatically scroll to the top of the page on view or product change
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [currentView, selectedProductId]);
 
   // Auto-restore auth from session cookie on page load
   useEffect(() => {

@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Database } from 'bun:sqlite';
 import { createClient } from '@libsql/client';
 import * as dotenv from 'dotenv';

@@ -1,8 +1,20 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  /* config options here */
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+    ],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

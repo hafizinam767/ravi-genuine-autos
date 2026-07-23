@@ -1,5 +1,5 @@
 import { createClient } from '@libsql/client';
-import { PrismaLibSQL } from '@prisma/adapter-libsql';
+import { PrismaLibSql } from '@prisma/adapter-libsql';
 import { PrismaClient } from '@prisma/client';
 import * as dotenv from 'dotenv';
 
@@ -16,7 +16,7 @@ async function main() {
     authToken: tursoToken,
   };
 
-  const adapter = new PrismaLibSQL(config);
+  const adapter = new PrismaLibSql(config);
   const prisma = new PrismaClient({ adapter });
 
   console.log('Fetching categories...');
