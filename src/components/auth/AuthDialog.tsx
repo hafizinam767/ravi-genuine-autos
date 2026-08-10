@@ -247,9 +247,9 @@ export default function AuthDialog() {
           </DialogTitle>
           <DialogDescription>
             {effectiveMode === 'login'
-              ? 'Sign in to your Ravi Genuine Autos account'
+              ? 'Sign in to your Genuine Autos Legacy account'
               : effectiveMode === 'register'
-                ? 'Join Ravi Genuine Autos to track your orders'
+                ? 'Join Genuine Autos Legacy to track your orders'
                 : "Enter your email and we'll send you a reset link"}
           </DialogDescription>
         </DialogHeader>

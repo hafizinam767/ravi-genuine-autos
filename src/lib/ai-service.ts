@@ -177,7 +177,7 @@ export class AIService {
     const trimmedMessage = message.trim();
     if (!trimmedMessage) return 'How can I assist you with vehicle parts today?';
 
-    const SYSTEM_PROMPT = `You are a helpful assistant for Ravi Genuine Autos, a premier Pakistani vehicle parts shop. 
+    const SYSTEM_PROMPT = `You are a helpful assistant for Genuine Autos Legacy, a premier Pakistani vehicle parts shop. 
 Help customers find genuine and aftermarket parts, check compatibility, pricing, and availability.
 Shop Contact: Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636.
 Location: Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road, Lahore.
@@ -193,10 +193,14 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
           systemInstruction: SYSTEM_PROMPT,
         });
 
-        const formattedHistory = history.map((msg) => ({
+        const rawHistory = history.map((msg) => ({
           role: msg.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: msg.content }],
         }));
+
+        // Gemini requires history to start with a 'user' message
+        const firstUserIndex = rawHistory.findIndex((h) => h.role === 'user');
+        const formattedHistory = firstUserIndex !== -1 ? rawHistory.slice(firstUserIndex) : [];
 
         const chat = model.startChat({
           history: formattedHistory,
@@ -221,7 +225,7 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
       lower.includes('address') || lower.includes('location') || lower.includes('where') ||
       lower.includes('timing') || lower.includes('open') || lower.includes('hours')
     ) {
-      return `📍 **Ravi Genuine Autos Store Details:**
+      return `📍 **Genuine Autos Legacy Store Details:**
 • **Location:** Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road, Lahore.
 • **Contact Persons / Phone:** Mehar Zulfeqar Ali (📞 0320-0408917 / 0332-4131636)
 • **Timings:** Monday - Saturday (9:00 AM - 10:00 PM), Sunday (10:00 AM - 10:00 PM)
@@ -249,7 +253,7 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
     const popularCategories = await db.category.findMany({ take: 6, select: { name: true } });
     const catList = popularCategories.map((c) => c.name).join(', ');
 
-    return `Welcome to **Ravi Genuine Autos**! I can help you find genuine parts for Suzuki, Toyota, Honda, MG, CHANGAN, and more.\n\nWe stock items across top categories like: ${catList || 'Brakes, Filters, Suspension, Engine parts, Electrical, and Accessories'}.\n\nPlease mention your car model (e.g. *Suzuki Alto*, *Toyota Corolla*, *Honda Civic*) or the part name you need. You can also contact **Mehar Zulfeqar Ali directly at 0320-0408917 / 0332-4131636** for instant assistance!`;
+    return `Welcome to **Genuine Autos Legacy**! I can help you find genuine parts for Suzuki, Toyota, Honda, MG, CHANGAN, and more.\n\nWe stock items across top categories like: ${catList || 'Brakes, Filters, Suspension, Engine parts, Electrical, and Accessories'}.\n\nPlease mention your car model (e.g. *Suzuki Alto*, *Toyota Corolla*, *Honda Civic*) or the part name you need. You can also contact **Mehar Zulfeqar Ali directly at 0320-0408917 / 0332-4131636** for instant assistance!`;
   }
 
   static async identifyPart(imageData: string, hint?: string | null): Promise<IdentificationResult> {
@@ -258,7 +262,7 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
     }
 
     const imageHint = hint || extractHintFromImageData(imageData);
-    const IDENTIFY_SYSTEM_PROMPT = `You are an expert vehicle parts identification assistant for Ravi Genuine Autos, Pakistan. Analyze the image of a vehicle part and return a JSON object.`;
+    const IDENTIFY_SYSTEM_PROMPT = `You are an expert vehicle parts identification assistant for Genuine Autos Legacy, Pakistan. Analyze the image of a vehicle part and return a JSON object.`;
 
     const schema: Schema = {
       description: "Vehicle part identification result",
@@ -449,7 +453,7 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
       keywords: extractKeywords(query),
     };
 
-    const SEARCH_SYSTEM_PROMPT = `You are an intelligent search assistant for Ravi Genuine Autos, a Pakistani vehicle parts e-commerce shop. Analyze the customer's search query and return JSON.`;
+    const SEARCH_SYSTEM_PROMPT = `You are an intelligent search assistant for Genuine Autos Legacy, a Pakistani vehicle parts e-commerce shop. Analyze the customer's search query and return JSON.`;
 
     const schema: Schema = {
       description: "Search intent analysis",

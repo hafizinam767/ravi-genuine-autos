@@ -1329,7 +1329,7 @@ function AdminDashboardContent() {
             })}
           </nav>
           <div className="border-t border-white/10 p-4">
-            <p className="text-xs text-white/40">Ravi Genuine Autos</p>
+            <p className="text-xs text-white/40">Genuine Autos Legacy</p>
             <p className="text-xs text-white/30">Admin Dashboard</p>
           </div>
         </div>

@@ -200,8 +200,8 @@ export default function Header() {
           >
             <img
               src="/logo.png"
-              alt="Ravi Genuine Autos"
-              className="h-12 w-auto lg:h-14"
+              alt="Genuine Autos Legacy"
+              className="h-14 w-auto sm:h-16 lg:h-20 object-contain drop-shadow-md transition-transform duration-200"
             />
             <span className="hidden lg:block text-xs font-semibold text-gray-600 leading-tight max-w-[160px]">
               Biggest Range of<br />
@@ -464,8 +464,8 @@ export default function Header() {
             <SheetTitle className="flex items-center gap-2 text-white">
               <img
                 src="/logo-white.png"
-                alt="Ravi Genuine Autos"
-                className="h-10 w-auto"
+                alt="Genuine Autos Legacy"
+                className="h-14 w-auto object-contain drop-shadow"
               />
             </SheetTitle>
           </SheetHeader>

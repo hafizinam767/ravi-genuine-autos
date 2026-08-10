@@ -162,11 +162,11 @@ export default function Footer() {
               </h4>
               <div className="space-y-3.5">
                 <a
-                  href="mailto:info@ravigenuineautos.com"
+                  href="mailto:info@genuineautoslegacy.com"
                   className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
                 >
                   <Mail className="size-4 shrink-0" style={{ color: '#EF4444' }} />
-                  <span className="break-all">info@ravigenuineautos.com</span>
+                  <span className="break-all">info@genuineautoslegacy.com</span>
                 </a>
                 <a
                   href="tel:03200408917"
@@ -189,10 +189,10 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Column 5 — Ravi Genuine Autos Info */}
+            {/* Column 5 — Genuine Autos Legacy Info */}
             <div>
               <h4 className="mb-5 text-sm font-semibold uppercase tracking-wider text-white">
-                RAVI GENUINE AUTOS
+                GENUINE AUTOS LEGACY
               </h4>
               <div className="mb-4">
                 <button
@@ -202,8 +202,8 @@ export default function Footer() {
                 >
                   <img
                     src="/logo.png"
-                    alt="Ravi Genuine Autos"
-                    className="h-16 w-auto rounded-lg"
+                    alt="Genuine Autos Legacy"
+                    className="h-20 w-auto sm:h-24 object-contain rounded-xl drop-shadow-md"
                   />
                 </button>
               </div>
@@ -236,7 +236,7 @@ export default function Footer() {
       <div className="bg-gray-950">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 sm:flex-row sm:px-6 lg:px-8">
           <p className="text-center text-xs text-gray-500 sm:text-left">
-            &copy; 2025 Ravi Genuine Autos. All rights reserved.
+            &copy; 2025 Genuine Autos Legacy. All rights reserved.
           </p>
           <p className="text-center text-xs text-gray-600 sm:text-right">
             Genuine Auto Parts &mdash; Lahore, Pakistan

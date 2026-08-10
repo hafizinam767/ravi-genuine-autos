@@ -63,7 +63,7 @@ function createSampleSvgDataUrl(title: string, emoji: string): string {
     <circle cx="200" cy="130" r="60" fill="#b91c1c" opacity="0.2"/>
     <text x="200" y="145" font-size="54" text-anchor="middle">${emoji}</text>
     <text x="200" y="220" font-size="20" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">${title}</text>
-    <text x="200" y="250" font-size="13" font-family="sans-serif" fill="#94a3b8" text-anchor="middle">Ravi Genuine Autos • AI Part Scan</text>
+    <text x="200" y="250" font-size="13" font-family="sans-serif" fill="#94a3b8" text-anchor="middle">Genuine Autos Legacy • AI Part Scan</text>
   </svg>`;
   const base64 = btoa(unescape(encodeURIComponent(svg)));
   return `data:image/svg+xml;base64,${base64}`;

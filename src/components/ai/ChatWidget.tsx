@@ -16,7 +16,7 @@ interface ChatMessage {
 const WELCOME_MESSAGE: ChatMessage = {
   role: 'assistant',
   content:
-    "Hello! I'm your Ravi Genuine Autos assistant. I can help you find exact genuine parts for your vehicle, check stock, pricing, and compatibility. What are you looking for today?",
+    "Hello! I'm your Genuine Autos Legacy assistant. I can help you find exact genuine parts for your vehicle, check stock, pricing, and compatibility. What are you looking for today?",
 };
 
 function ChatMessageContent({ content, isUser }: { content: string; isUser: boolean }) {
@@ -204,7 +204,7 @@ export default function ChatWidget() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-white">
-                    Ravi Auto Assistant
+                    Genuine Autos Assistant
                   </h3>
                   <p className="text-xs text-white/80">Always here to help</p>
                 </div>
