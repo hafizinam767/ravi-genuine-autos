@@ -73,9 +73,20 @@ const FEATURED_SLUGS = ['body-parts', 'engine-parts', 'chassis-suspension-parts'
 
 // ─── Component ──────────────────────────────────────────────────────────
 
+const INITIAL_CATEGORIES: Category[] = [
+  { id: 'body-parts', name: 'Body Parts', slug: 'body-parts', icon: null, description: 'Doors, fenders, bumpers', image: '/categories/body-parts.jpg', productCount: 15 },
+  { id: 'engine-parts', name: 'Engine Parts', slug: 'engine-parts', icon: null, description: 'Pistons, valves, belts', image: '/categories/engine-parts.png', productCount: 24 },
+  { id: 'chassis-suspension-parts', name: 'Chassis & Suspension', slug: 'chassis-suspension-parts', icon: null, description: 'Shocks, struts, arms', image: '/categories/suspension.jpg', productCount: 18 },
+  { id: 'brake-parts', name: 'Brake Parts', slug: 'brake-parts', icon: null, description: 'Pads, rotors, calipers', image: '/categories/brake-service.png', productCount: 20 },
+  { id: 'interior-parts', name: 'Interior Parts', slug: 'interior-parts', icon: null, description: 'Seats, mats, dashboards', image: '/products/interior-parts.png', productCount: 12 },
+  { id: 'electrical-parts', name: 'Electrical Parts', slug: 'electrical-parts', icon: null, description: 'Lights, fuses, wiring', image: '/products/electrical-parts.png', productCount: 16 },
+  { id: 'ac-cooling', name: 'AC & Cooling', slug: 'ac-cooling', icon: null, description: 'Compressors, radiators', image: '/products/ac-cooling.png', productCount: 10 },
+  { id: 'transmission-parts', name: 'Transmission Parts', slug: 'transmission-parts', icon: null, description: 'Gears, clutch kits', image: '/products/transmission-parts.png', productCount: 14 },
+];
+
 export default function CategoryGrid() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { setView, setFilters } = useAppStore();
 
@@ -85,12 +96,11 @@ export default function CategoryGrid() {
         const res = await fetch('/api/categories');
         if (!res.ok) throw new Error('Failed to fetch categories');
         const data = await res.json();
-        setCategories(data.categories ?? []);
+        if (data.categories?.length) {
+          setCategories(data.categories);
+        }
       } catch (err) {
         console.error('Error fetching categories:', err);
-        setError('Could not load categories');
-      } finally {
-        setLoading(false);
       }
     }
     fetchCategories();

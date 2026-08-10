@@ -31,9 +31,80 @@ interface Product {
 
 // ─── Component ──────────────────────────────────────────────────────────
 
+const INITIAL_FEATURED_PRODUCTS: Product[] = [
+  {
+    id: 'fp-1',
+    name: 'Genuine Suzuki Alto Front Brake Pads Set',
+    slug: 'suzuki-alto-front-brake-pads',
+    description: 'High performance OEM front brake pad kit for Suzuki Alto.',
+    price: 4800,
+    condition: 'NEW',
+    stock: 25,
+    images: '/products/brake-parts.png',
+    sku: 'BRK-SUZ-001',
+    partNumber: '55810-68H00',
+    categoryId: 'brake-parts',
+    carModelId: 'suzuki-alto',
+    featured: true,
+    category: { id: 'brake-parts', name: 'Brake Parts', slug: 'brake-parts' },
+    carModel: { id: 'suzuki-alto', name: 'Alto', make: 'Suzuki', slug: 'suzuki-alto' },
+  },
+  {
+    id: 'fp-2',
+    name: 'Toyota Corolla XLI / GLI Engine Oil Filter',
+    slug: 'toyota-corolla-oil-filter',
+    description: 'Original Toyota genuine oil filter element.',
+    price: 1850,
+    condition: 'NEW',
+    stock: 40,
+    images: '/products/engine-parts.png',
+    sku: 'ENG-TOY-002',
+    partNumber: '90915-YZZD2',
+    categoryId: 'engine-parts',
+    carModelId: 'toyota-corolla-gli',
+    featured: true,
+    category: { id: 'engine-parts', name: 'Engine Parts', slug: 'engine-parts' },
+    carModel: { id: 'toyota-corolla-gli', name: 'Corolla GLI', make: 'Toyota', slug: 'toyota-corolla-gli' },
+  },
+  {
+    id: 'fp-3',
+    name: 'Honda Civic Air Cleaner Filter Element',
+    slug: 'honda-civic-air-filter',
+    description: 'Genuine Honda intake air cleaner element for maximum engine air flow.',
+    price: 3200,
+    condition: 'NEW',
+    stock: 18,
+    images: '/products/engine-parts.png',
+    sku: 'ENG-HON-003',
+    partNumber: '17220-5AA-A00',
+    categoryId: 'engine-parts',
+    carModelId: 'honda-civic',
+    featured: true,
+    category: { id: 'engine-parts', name: 'Engine Parts', slug: 'engine-parts' },
+    carModel: { id: 'honda-civic', name: 'Civic', make: 'Honda', slug: 'honda-civic' },
+  },
+  {
+    id: 'fp-4',
+    name: 'Suzuki WagonR Front Shock Absorber Pair',
+    slug: 'suzuki-wagonr-front-shock-absorber',
+    description: 'Heavy duty OEM front suspension shocks for smooth driving stability.',
+    price: 18500,
+    condition: 'NEW',
+    stock: 10,
+    images: '/categories/suspension.jpg',
+    sku: 'SUS-SUZ-004',
+    partNumber: '41601-85K00',
+    categoryId: 'chassis-suspension-parts',
+    carModelId: 'suzuki-wagonr',
+    featured: true,
+    category: { id: 'chassis-suspension-parts', name: 'Chassis & Suspension', slug: 'chassis-suspension-parts' },
+    carModel: { id: 'suzuki-wagonr', name: 'WagonR', make: 'Suzuki', slug: 'suzuki-wagonr' },
+  },
+];
+
 export default function FeaturedProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(INITIAL_FEATURED_PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { setView } = useAppStore();
 
@@ -43,12 +114,11 @@ export default function FeaturedProducts() {
         const res = await fetch('/api/products?featured=true&limit=8');
         if (!res.ok) throw new Error('Failed to fetch products');
         const data = await res.json();
-        setProducts(data.products ?? []);
+        if (data.products?.length) {
+          setProducts(data.products);
+        }
       } catch (err) {
         console.error('Error fetching featured products:', err);
-        setError('Could not load featured products');
-      } finally {
-        setLoading(false);
       }
     }
     fetchProducts();
