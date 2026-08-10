@@ -2,17 +2,20 @@
 
 import React, { useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
+import dynamic from 'next/dynamic';
+
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HomeView from '@/components/home/HomeView';
-import CatalogView from '@/components/catalog/CatalogView';
-import ProductDetailView from '@/components/product/ProductDetailView';
-import CheckoutView from '@/components/cart/CheckoutView';
-import AccountView from '@/components/auth/AccountView';
-import IdentifyView from '@/components/ai/IdentifyView';
-import AdminDashboard from '@/components/admin/AdminDashboard';
-import AuthDialog from '@/components/auth/AuthDialog';
-import ChatWidget from '@/components/ai/ChatWidget';
+
+const CatalogView = dynamic(() => import('@/components/catalog/CatalogView'));
+const ProductDetailView = dynamic(() => import('@/components/product/ProductDetailView'));
+const CheckoutView = dynamic(() => import('@/components/cart/CheckoutView'));
+const AccountView = dynamic(() => import('@/components/auth/AccountView'));
+const IdentifyView = dynamic(() => import('@/components/ai/IdentifyView'));
+const AdminDashboard = dynamic(() => import('@/components/admin/AdminDashboard'));
+const AuthDialog = dynamic(() => import('@/components/auth/AuthDialog'));
+const ChatWidget = dynamic(() => import('@/components/ai/ChatWidget'), { ssr: false });
 
 export default function Home() {
   const currentView = useAppStore((s) => s.currentView);

@@ -12,7 +12,13 @@ function slugify(text: string): string {
 export async function GET() {
   try {
     const carModels = await db.carModel.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        slug: true,
+        image: true,
+        createdAt: true,
         _count: {
           select: { products: true },
         },
@@ -30,7 +36,14 @@ export async function GET() {
       createdAt: model.createdAt,
     }));
 
-    return NextResponse.json({ carModels: formatted });
+    return NextResponse.json(
+      { carModels: formatted },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error fetching car models:', error);
     return NextResponse.json(

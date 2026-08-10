@@ -66,9 +66,27 @@ export async function GET(request: NextRequest) {
     const [products, total] = await Promise.all([
       db.product.findMany({
         where,
-        include: {
-          category: true,
-          carModel: true,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          price: true,
+          condition: true,
+          stock: true,
+          images: true,
+          sku: true,
+          partNumber: true,
+          categoryId: true,
+          carModelId: true,
+          featured: true,
+          createdAt: true,
+          category: {
+            select: { id: true, name: true, slug: true, image: true },
+          },
+          carModel: {
+            select: { id: true, name: true, make: true, slug: true },
+          },
         },
         orderBy,
         skip,
@@ -77,15 +95,22 @@ export async function GET(request: NextRequest) {
       db.product.count({ where }),
     ]);
 
-    return NextResponse.json({
-      products,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+    return NextResponse.json(
+      {
+        products,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
-    });
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(

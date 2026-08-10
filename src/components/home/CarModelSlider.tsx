@@ -105,7 +105,7 @@ export default function CarModelSlider() {
   useEffect(() => {
     async function fetchCarModels() {
       try {
-        const res = await fetch('/api/car-models', { cache: 'no-store' });
+        const res = await fetch('/api/car-models');
         if (!res.ok) throw new Error('Failed to fetch car models');
         const data = await res.json();
         setCarModels(data.carModels ?? []);
