@@ -179,8 +179,8 @@ export class AIService {
 
     const SYSTEM_PROMPT = `You are a helpful assistant for Genuine Autos Legacy, a premier Pakistani vehicle parts shop. 
 Help customers find genuine and aftermarket parts, check compatibility, pricing, and availability.
-Shop Contact: Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636.
-Location: Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road, Lahore.
+Shop Contact: Mehar Zulfeqar Ali +92-332-4131636 / +92-326-4748635.
+Location: Near Ali Town Orange Line Station & Pizza Online Basement, Faisal Zaman Plaza, Thokar Niaz Baig, Raiwind Road Lahore, Pakistan.
 Popular car makes served: Suzuki (Alto, Cultus, Wagon R, Swift), Toyota (Corolla, Yaris, Fortuner, Hilux), Honda (Civic, City, BR-V), MG (ZS, HS), CHANGAN (Alsvin, Karvaan, Oshan X7), Hyundai, Daihatsu.
 
 Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for instant order booking.`;
@@ -226,8 +226,8 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
       lower.includes('timing') || lower.includes('open') || lower.includes('hours')
     ) {
       return `📍 **Genuine Autos Legacy Store Details:**
-• **Location:** Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road, Lahore.
-• **Contact Persons / Phone:** Mehar Zulfeqar Ali (📞 0320-0408917 / 0332-4131636)
+• **Location:** Near Ali Town Orange Line Station & Pizza Online Basement, Faisal Zaman Plaza, Thokar Niaz Baig, Raiwind Road Lahore, Pakistan.
+• **Contact Persons / Phone:** Mehar Zulfeqar Ali (📞 +92-332-4131636 / +92-326-4748635)
 • **Timings:** Monday - Saturday (9:00 AM - 10:00 PM), Sunday (10:00 AM - 10:00 PM)
 • **Services:** Genuine & Quality Aftermarket Parts for Suzuki, Toyota, Honda, KIA, MG, CHANGAN, Hyundai & Daihatsu models. Delivery available across Pakistan!`;
     }
@@ -246,14 +246,14 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
         const partNo = p.partNumber ? ` (P/N: ${p.partNumber})` : '';
         reply += `${idx + 1}. **${p.name}**${partNo}\n   • **Vehicle:** ${p.carModel.make} ${p.carModel.name}\n   • **Category:** ${p.category.name}\n   • **Price:** ${priceFormatted} (${p.condition})\n   • **Stock:** ${p.stock > 0 ? 'In Stock ✅' : 'Available on Order'}\n\n`;
       });
-      reply += `📞 To confirm order or ask about compatibility, call **Mehar Zulfeqar Ali at 0320-0408917 / 0332-4131636**.`;
+      reply += `📞 To confirm order or ask about compatibility, call **Mehar Zulfeqar Ali at +92-332-4131636 / +92-326-4748635**.`;
       return reply;
     }
 
     const popularCategories = await db.category.findMany({ take: 6, select: { name: true } });
     const catList = popularCategories.map((c) => c.name).join(', ');
 
-    return `Welcome to **Genuine Autos Legacy**! I can help you find genuine parts for Suzuki, Toyota, Honda, MG, CHANGAN, and more.\n\nWe stock items across top categories like: ${catList || 'Brakes, Filters, Suspension, Engine parts, Electrical, and Accessories'}.\n\nPlease mention your car model (e.g. *Suzuki Alto*, *Toyota Corolla*, *Honda Civic*) or the part name you need. You can also contact **Mehar Zulfeqar Ali directly at 0320-0408917 / 0332-4131636** for instant assistance!`;
+    return `Welcome to **Genuine Autos Legacy**! I can help you find genuine parts for Suzuki, Toyota, Honda, MG, CHANGAN, and more.\n\nWe stock items across top categories like: ${catList || 'Brakes, Filters, Suspension, Engine parts, Electrical, and Accessories'}.\n\nPlease mention your car model (e.g. *Suzuki Alto*, *Toyota Corolla*, *Honda Civic*) or the part name you need. You can also contact **Mehar Zulfeqar Ali directly at +92-332-4131636 / +92-326-4748635** for instant assistance!`;
   }
 
   static async identifyPart(imageData: string, hint?: string | null): Promise<IdentificationResult> {
@@ -436,7 +436,7 @@ Always be friendly, precise, and recommend contacting Mehar Zulfeqar Ali for ins
       possibleCarModels: ['Suzuki Alto', 'Toyota Corolla', 'Honda Civic'],
       condition: 'new',
       estimatedCategory: 'General',
-      tips: 'For accurate identification, share a clear photo showing part numbers, mounting points, and surrounding context. Call Mehar Zulfeqar Ali at 0320-0408917 / 0332-4131636.',
+      tips: 'For accurate identification, share a clear photo showing part numbers, mounting points, and surrounding context. Call Mehar Zulfeqar Ali at +92-332-4131636 / +92-326-4748635.',
       confidence: 'low',
       source: 'catalog',
       matchedProduct: null,

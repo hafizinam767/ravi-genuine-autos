@@ -39,6 +39,8 @@ import {
   Truck,
   Shield,
   Layers,
+  Phone,
+  MessageCircle,
 } from 'lucide-react';
 
 interface Product {
@@ -409,6 +411,36 @@ export default function ProductDetailView() {
                 {stockStatus.label}
               </span>
             )}
+          </div>
+
+          {/* ── Price Confirmation Notice ── */}
+          <div className="rounded-xl border border-amber-300 bg-amber-50/95 p-3.5 shadow-xs dark:border-amber-700/50 dark:bg-amber-950/40">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+              <div className="space-y-2">
+                <p className="text-xs sm:text-sm font-bold text-amber-950 dark:text-amber-200 leading-snug">
+                  Please confirm the price by Call or Whatsapp before placing any order.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                  <a
+                    href="tel:+923324131636"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-colors"
+                  >
+                    <Phone className="size-3 text-amber-400" />
+                    <span>Call: 0332-4131636</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/923324131636?text=${encodeURIComponent(`Hi Genuine Autos Legacy, I would like to confirm the price and availability for: ${product.name} (Rs. ${product.price.toLocaleString()})`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-[#25D366] px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-[#1ebe5d] transition-colors"
+                  >
+                    <MessageCircle className="size-3.5" />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Car Model Compatibility */}

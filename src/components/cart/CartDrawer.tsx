@@ -20,6 +20,7 @@ import {
   X,
   ShoppingBag,
   ArrowRight,
+  AlertTriangle,
 } from 'lucide-react';
 
 export function CartDrawer() {
@@ -195,7 +196,17 @@ export function CartDrawer() {
 
             {/* ── Footer ──────────────────────────────────────── */}
             <SheetFooter className="border-t px-6 py-4">
-              <div className="w-full space-y-4">
+              <div className="w-full space-y-3">
+                {/* ── Price Confirmation Notice ── */}
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-2.5 text-amber-950 shadow-2xs">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="size-4 shrink-0 text-amber-600 mt-0.5" />
+                    <p className="text-xs font-semibold leading-snug">
+                      Please confirm the price by Call or Whatsapp before placing any order.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
                     Subtotal

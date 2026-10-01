@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         response:
-          'I apologize, but I am having trouble processing your request right now. Please contact Mehar Zulfeqar Ali directly at 0320-0408917 / 0332-4131636 for assistance.',
+          'I apologize, but I am having trouble processing your request right now. Please contact Mehar Zulfeqar Ali directly at +92-332-4131636 / +92-326-4748635 for assistance.',
         error: 'Chat service temporary error',
       },
       { status: 500 }

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   metadataBase: defaultUrl,
   title: "Genuine Autos Legacy - Quality Auto Parts in Pakistan",
   description:
-    "Genuine Parts for Suzuki, Toyota, Honda, KIA, MG, CHANGAN & ALL Wheel Drive Models. Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road, Lahore. Contact: Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636. Mon-Sat: 9AM-10PM, Sun: 10AM-10PM",
+    "Genuine Parts for Suzuki, Toyota, Honda, KIA, MG, CHANGAN & ALL Wheel Drive Models. Near Ali Town Orange Line Station & Pizza Online Basement, Faisal Zaman Plaza, Thokar Niaz Baig, Raiwind Road Lahore, Pakistan. Contact: Mehar Zulfeqar Ali +92-332-4131636 / +92-326-4748635. Mon-Sat: 9AM-10PM, Sun: 10AM-10PM",
   keywords: [
     "auto parts Pakistan",
     "genuine car parts",
@@ -44,10 +44,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Genuine Autos Legacy - Quality Auto Parts in Pakistan",
     description:
-      "Genuine Parts for Suzuki, Toyota, Honda, KIA, MG, CHANGAN & ALL Wheel Drive Models. Near Ali Town Orange Line Station, Thokar Niaz Baig, Lahore. Call: Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636",
+      "Genuine Parts for Suzuki, Toyota, Honda, KIA, MG, CHANGAN & ALL Wheel Drive Models. Near Ali Town Orange Line Station & Pizza Online Basement, Faisal Zaman Plaza, Thokar Niaz Baig, Raiwind Road Lahore, Pakistan. Call: Mehar Zulfeqar Ali +92-332-4131636 / +92-326-4748635",
     siteName: "Genuine Autos Legacy",
     type: "website",
-    images: [{ url: "/logo.png", width: 1024, height: 1024, alt: "Genuine Autos Legacy Logo" }],
+    images: [{ url: "/logo.png", width: 1024, height: 529, alt: "Genuine Autos Legacy Logo" }],
   },
 };
 

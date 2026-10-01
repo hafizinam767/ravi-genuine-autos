@@ -130,14 +130,14 @@ export default function ChatWidget() {
         role: 'assistant',
         content:
           data.response ||
-          'Sorry, I could not process your request. Please contact us at Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636.',
+          'Sorry, I could not process your request. Please contact us at Mehar Zulfeqar Ali +92-332-4131636 / +92-326-4748635.',
       };
       setMessages((prev) => [...prev, botMessage]);
     } catch {
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content:
-          'I apologize, but I am having trouble connecting right now. Please contact us directly at Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636 for assistance.',
+          'I apologize, but I am having trouble connecting right now. Please contact us directly at Mehar Zulfeqar Ali +92-332-4131636 / +92-326-4748635 for assistance.',
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -322,7 +322,7 @@ export default function ChatWidget() {
               <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
                 Call for orders:{' '}
                 <span className="font-medium text-red-700">
-                  Mehar Zulfeqar Ali 0320-0408917 / 0332-4131636
+                  Mehar Zulfeqar Ali +92-332-4131636 / +92-326-4748635
                 </span>
               </p>
             </div>

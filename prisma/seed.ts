@@ -1185,10 +1185,10 @@ async function main() {
     data: {
       email: 'admin@ravigenuine.com',
       name: 'Mehar Zulfeqar Ali',
-      phone: '0320-0408917',
+      phone: '+92-332-4131636',
       password: hashPasswordSync('admin123'),
       role: 'admin',
-      address: 'Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road',
+      address: 'Near Ali Town Orange Line Station & Pizza Online Basement, Faisal Zaman Plaza, Thokar Niaz Baig, Raiwind Road',
       city: 'Lahore',
     },
   })
@@ -1272,8 +1272,8 @@ async function main() {
         userId: admin.id,
         label: 'Shop',
         name: 'Mehar Zulfeqar Ali',
-        phone: '0320-0408917',
-        address: 'Near Ali Town Orange Line Station, Thokar Niaz Baig, Raiwind Road',
+        phone: '+92-332-4131636',
+        address: 'Near Ali Town Orange Line Station & Pizza Online Basement, Faisal Zaman Plaza, Thokar Niaz Baig, Raiwind Road',
         city: 'Lahore',
         isDefault: true,
       },

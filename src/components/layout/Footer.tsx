@@ -162,25 +162,25 @@ export default function Footer() {
               </h4>
               <div className="space-y-3.5">
                 <a
-                  href="mailto:info@genuineautoslegacy.com"
+                  href="mailto:sales.genuineautoslegacy@gmail.com"
                   className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
                 >
                   <Mail className="size-4 shrink-0" style={{ color: '#EF4444' }} />
-                  <span className="break-all">info@genuineautoslegacy.com</span>
+                  <span className="break-all">sales.genuineautoslegacy@gmail.com</span>
                 </a>
                 <a
-                  href="tel:03200408917"
-                  className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
-                >
-                  <Phone className="size-4 shrink-0" style={{ color: '#EF4444' }} />
-                  +92-320-0408917
-                </a>
-                <a
-                  href="tel:03324131636"
+                  href="tel:+923324131636"
                   className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
                 >
                   <Phone className="size-4 shrink-0" style={{ color: '#EF4444' }} />
                   +92-332-4131636
+                </a>
+                <a
+                  href="tel:+923264748635"
+                  className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+                >
+                  <Phone className="size-4 shrink-0" style={{ color: '#EF4444' }} />
+                  +92-326-4748635
                 </a>
                 <div className="flex items-center gap-2.5 text-sm text-gray-400">
                   <User className="size-4 shrink-0" style={{ color: '#EF4444' }} />
@@ -203,7 +203,7 @@ export default function Footer() {
                   <img
                     src="/logo.png"
                     alt="Genuine Autos Legacy"
-                    className="h-20 w-auto sm:h-24 object-contain rounded-xl drop-shadow-md"
+                    className="h-16 w-auto sm:h-20 object-contain rounded-xl drop-shadow-md"
                   />
                 </button>
               </div>
@@ -213,11 +213,11 @@ export default function Footer() {
               <div className="flex items-start gap-2.5 text-sm text-gray-400">
                 <MapPin className="mt-0.5 size-4 shrink-0" style={{ color: '#EF4444' }} />
                 <span>
-                  Near Ali Town Orange Line Station,
+                  Near Ali Town Orange Line Station &amp; Pizza Online Basement,
                   <br />
-                  Thokar Niaz Baig, Raiwind Road,
+                  Faisal Zaman Plaza, Thokar Niaz Baig,
                   <br />
-                  Lahore, Pakistan
+                  Raiwind Road, Lahore, Pakistan
                 </span>
               </div>
               <div className="mt-3 flex items-start gap-2.5 text-sm text-gray-400">

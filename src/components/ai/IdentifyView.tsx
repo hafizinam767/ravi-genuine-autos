@@ -155,7 +155,7 @@ export default function IdentifyView() {
       if (!res.ok) {
         setError(
           data.error ||
-            'Identification failed. Please try again or contact us at 0320-0408917 / 0332-4131636.'
+            'Identification failed. Please try again or contact us at +92-332-4131636 / +92-326-4748635.'
         );
         return;
       }
@@ -163,7 +163,7 @@ export default function IdentifyView() {
       setResult(data.identification);
     } catch {
       setError(
-        'Network error. Please check your connection and try again, or contact us at 0320-0408917 / 0332-4131636.'
+        'Network error. Please check your connection and try again, or contact us at +92-332-4131636 / +92-326-4748635.'
       );
     } finally {
       setIsIdentifying(false);
@@ -575,7 +575,7 @@ export default function IdentifyView() {
                 </div>
 
                 <p className="text-center text-xs text-muted-foreground">
-                  For immediate order assistance, contact Mehar Zulfeqar Ali at 0320-0408917 / 0332-4131636.
+                  For immediate order assistance, contact Mehar Zulfeqar Ali at +92-332-4131636 / +92-326-4748635.
                 </p>
               </CardContent>
             </Card>

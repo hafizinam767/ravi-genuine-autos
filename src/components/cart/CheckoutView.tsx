@@ -27,6 +27,7 @@ import {
   CheckCircle2,
   Truck,
   ShoppingCart,
+  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -404,6 +405,19 @@ export default function CheckoutView() {
                   <span className="text-xl font-bold" style={{ color: '#B91C1C' }}>
                     Rs. {subtotal.toLocaleString()}
                   </span>
+                </div>
+
+                {/* ── Price Confirmation Notice ── */}
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-950 shadow-2xs">
+                  <div className="flex items-start gap-2.5">
+                    <AlertTriangle className="size-4 shrink-0 text-amber-600 mt-0.5" />
+                    <div>
+                      <p className="font-bold text-amber-900">Important Notice:</p>
+                      <p className="font-semibold leading-snug">
+                        Please confirm the price by Call or Whatsapp before placing any order.
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Place Order Button */}

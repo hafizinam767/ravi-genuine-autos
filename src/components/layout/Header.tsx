@@ -44,6 +44,8 @@ import {
   Settings2,
   Snowflake,
   LayoutDashboard,
+  AlertTriangle,
+  MessageCircle,
 } from 'lucide-react';
 
 // ─── Navigation Links (like hyaparts.com category bar) ──────────────
@@ -156,6 +158,39 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full">
+      {/* ── Prominent Price Confirmation Notice Bar (Mobile & Desktop) ── */}
+      <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-3 py-1.5 sm:py-2 border-b border-amber-600/30 shadow-xs">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center sm:justify-between gap-x-3 gap-y-1.5 text-center sm:text-left">
+          <div className="flex items-center gap-2 text-xs sm:text-sm font-bold tracking-tight">
+            <span className="inline-flex shrink-0 items-center gap-1 rounded bg-slate-950 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-300">
+              <AlertTriangle className="size-3 text-amber-400" />
+              Notice
+            </span>
+            <span className="leading-snug">
+              Please confirm the price by Call or Whatsapp before placing any order.
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <a
+              href="tel:+923324131636"
+              className="inline-flex items-center gap-1.5 rounded-md bg-slate-950 px-2.5 py-1 text-xs font-bold text-white shadow-xs hover:bg-slate-800 transition-colors"
+            >
+              <Phone className="size-3 text-amber-400" />
+              <span>Call: 0332-4131636</span>
+            </a>
+            <a
+              href="https://wa.me/923324131636"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-[#25D366] px-2.5 py-1 text-xs font-bold text-white shadow-xs hover:bg-[#1ebe5d] transition-colors"
+            >
+              <MessageCircle className="size-3" />
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* ── Top Tagline Bar (like hyaparts.com) ─────────────────────────── */}
       <div
         className="hidden md:block"
@@ -167,18 +202,18 @@ export default function Header() {
           </p>
           <div className="flex items-center gap-4">
             <a
-              href="tel:0320-0408917"
+              href="tel:+923324131636"
               className="flex items-center gap-2 text-sm font-medium text-white/90 transition-colors hover:text-white"
             >
               <Phone className="size-3.5" />
-              0320-0408917
+              +92-332-4131636
             </a>
             <a
-              href="tel:0332-4131636"
+              href="tel:+923264748635"
               className="flex items-center gap-2 text-sm font-medium text-white/90 transition-colors hover:text-white"
             >
               <Phone className="size-3.5" />
-              0332-4131636
+              +92-326-4748635
             </a>
           </div>
         </div>
@@ -201,7 +236,7 @@ export default function Header() {
             <img
               src="/logo.png"
               alt="Genuine Autos Legacy"
-              className="h-14 w-auto sm:h-16 lg:h-20 object-contain drop-shadow-md transition-transform duration-200"
+              className="h-12 w-auto sm:h-14 lg:h-16 object-contain rounded-lg drop-shadow-md transition-transform duration-200"
             />
             <span className="hidden lg:block text-xs font-semibold text-gray-600 leading-tight max-w-[160px]">
               Biggest Range of<br />
@@ -471,6 +506,39 @@ export default function Header() {
           </SheetHeader>
 
           <ScrollArea className="h-[calc(100vh-80px)]">
+            {/* Price Confirmation Notice for Mobile Drawer */}
+            <div className="p-3 pb-1">
+              <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-amber-950 shadow-xs">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="size-4 shrink-0 text-amber-600 mt-0.5" />
+                  <div className="space-y-1.5">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-amber-800">
+                      Important Notice
+                    </p>
+                    <p className="text-xs font-semibold leading-snug">
+                      Please confirm the price by Call or Whatsapp before placing any order.
+                    </p>
+                    <div className="flex items-center gap-2 pt-1">
+                      <a
+                        href="tel:+923324131636"
+                        className="inline-flex items-center gap-1 rounded bg-slate-950 px-2 py-1 text-[11px] font-bold text-white hover:bg-slate-800"
+                      >
+                        <Phone className="size-2.5 text-amber-400" /> Call
+                      </a>
+                      <a
+                        href="https://wa.me/923324131636"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded bg-[#25D366] px-2 py-1 text-[11px] font-bold text-white hover:bg-[#1ebe5d]"
+                      >
+                        <MessageCircle className="size-2.5" /> WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Category Nav Links */}
             <div className="p-2">
               {CATEGORY_LINKS.map((link) => {
@@ -594,14 +662,20 @@ export default function Header() {
                   Contact Us
                 </p>
                 <div className="mt-2 space-y-1.5">
-                  <p className="flex items-center gap-2 text-sm text-gray-700">
+                  <a
+                    href="tel:+923324131636"
+                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-red-700"
+                  >
                     <Phone className="size-3.5" style={{ color: '#B91C1C' }} />
-                    0320-0408917
-                  </p>
-                  <p className="flex items-center gap-2 text-sm text-gray-700">
+                    +92-332-4131636
+                  </a>
+                  <a
+                    href="tel:+923264748635"
+                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-red-700"
+                  >
                     <Phone className="size-3.5" style={{ color: '#B91C1C' }} />
-                    0332-4131636
-                  </p>
+                    +92-326-4748635
+                  </a>
                   <p className="flex items-center gap-2 text-sm text-gray-700">
                     <Car className="size-3.5" style={{ color: '#B91C1C' }} />
                     Mehar Zulfeqar Ali

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
           possibleCarModels: ['Suzuki Alto', 'Toyota Corolla', 'Honda Civic'],
           condition: null,
           estimatedCategory: null,
-          tips: 'Please contact Mehar Zulfeqar Ali at 0320-0408917 / 0332-4131636 for expert part identification.',
+          tips: 'Please contact Mehar Zulfeqar Ali at +92-332-4131636 / +92-326-4748635 for expert part identification.',
           confidence: 'low',
         },
         error: 'Image identification service issue',
